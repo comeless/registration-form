@@ -1,0 +1,138 @@
+<html>
+	<head>
+		<style>
+			 body{
+				background-color:#EEEDE8;
+				
+			 }
+			 table {
+				margin:auto;
+				margin-top:40px;
+				background-color:#FFFFFF;
+				border:1px solid #FFFFFF;
+				padding: 15px;
+				border-spacing: 15px;
+				border-radius: 10px 10px 10px 10px;
+			 }
+			 .submit-button {
+				color: #FFFFFF;
+				background: #0000FF;
+				border-radius: 0 10px;
+				font-weight: bold;
+			}
+		</style>
+	
+	  
+		<script>
+			sessionStorage.clear();
+		    
+			function validate(){
+			  
+				//var regName = /^[a-zA-Z]+ [a-zA-Z]+ [a-zA-Z]+$/;
+				var regName= /^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)$/;
+				var regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+				var regPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,}$/;
+				var regDob = /^((?:0[0-9])|(?:[1-2][0-9])|(?:3[0-1]))\/((?:0[1-9])|(?:1[0-2]))\/(\d{4})$/; 
+				var name = document.getElementById('nm');
+				var email = document.getElementById('email');
+				var pass = document.getElementById('pass');
+				var dob = document.getElementById('dob');
+				if(!regName.test(name.value)){
+					alert('Invalid name given.');
+					name.focus;
+					name.style.cssText += 'border-color:red';
+					return false;
+				}else{
+					name.style.cssText += 'border-color:grey;background-color:#FFFFFF';
+				}
+				if(!regEmail.test(email.value)){
+					 alert('Please provide a valid email address');
+					 email.focus;
+					 email.style.cssText += 'border-color:red';
+					return false;
+				}else{
+					email.style.cssText += 'border-color:grey;background-color:#FFFFFF';
+				}
+				
+				if(!regPass.test(pass.value)){
+					 alert('Please provide a valid password');
+					 pass.focus;
+					 pass.style.cssText += 'border-color:red';
+					return false;
+				}else{
+					pass.style.cssText += 'border-color:grey;background-color:#FFFFFF';
+				}
+				
+				if(!regDob.test(dob.value)){
+					 alert('Please provide a valid date of birth');
+					 dob.focus;
+					 dob.style.cssText += 'border-color:red';
+					return false;
+				}else{
+					dob.style.cssText += 'border-color:grey;background-color:#FFFFFF';
+				}
+				if(document.getElementById("tnc").checked==false){
+					alert("Please accept Terms & Conditions");
+					return false;
+				}
+				
+				if(sessionStorage.getItem("session")==null){
+					let a = [];
+					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value});				    
+					
+					a.push(t);
+					//console.log(a);
+				    sessionStorage.setItem('session', JSON.stringify(a));
+					
+				 }else{
+				 
+					let a = JSON.parse(sessionStorage.getItem('session'));
+					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value});
+					a.push(t);				    
+				    sessionStorage.setItem('session', JSON.stringify(a)); 
+				 }
+				 displayData();
+				//console.log(JSON.parse(sessionStorage.getItem("session")));
+				return false;				
+			}
+			
+		function displayData(){
+			console.clear();
+			let str="<table><tr><th>Name</th><th>Email</th><th>Password</th><th>Date of Birth</th></tr>";
+			var d = JSON.parse(sessionStorage.getItem('session'));
+			document.getElementById("display").innerHTML = "";
+			
+			d.forEach(function each(element) {
+			  if (Array.isArray(element)) {
+				element.forEach(each);
+			  } else {
+				console.log(element);
+				 str +=  "<tr><td>" +element.name + "</td><td>" + element.email +  "</td><td>" + element.pass + "</td><td>" + element.dob  +  "</td></tr>";
+			  }
+			});
+			str += "</table>";
+			document.getElementById("display").innerHTML = str;
+		}
+				
+		</script>
+		
+	</head>
+	<body>
+		<div>
+		<form id="regfrm"  onsubmit="return validate();">
+			<table >
+				<tr><th colspan="2"><h2>Registration Form</h2></th></tr>
+				<tr><td>Name : </td><td><input type="text" name="nm" id="nm" placeholder="Enter full name" /></td></tr>
+				<tr><td>Email : </td><td><input type="text" name="email" id="email" placeholder="Enter email" /></td></tr>
+				<tr><td>Password : </td><td><input type="password" name="pass" id="pass" placeholder="Enter password" /></td></tr>
+				<tr><td>Date of birth : </td><td><input type="text" name="bob" id="dob" placeholder="Birth date (dd/mm/yyyy)" /></td></tr>
+				<tr><td colspna="2"><input type="checkbox" name="tnc" id="tnc" title="tnc" />Accept &amp; Conditions</td></tr>
+				<tr><td colspna="2"><button type="submit" class="submit-button" >Send</button></td></tr>
+			</table>
+		</form>
+		</div>
+		<div id="display">
+			
+		</div>
+	</body>
+</html>
