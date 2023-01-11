@@ -120,7 +120,7 @@
 				
 				if(sessionStorage.getItem("session")==null){
 					let a = [];
-					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value});				    
+					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value,"at":document.getElementById("tnc").checked});				    
 					
 					a.push(t);
 					//console.log(a);
@@ -129,7 +129,7 @@
 				 }else{
 				 
 					let a = JSON.parse(sessionStorage.getItem('session'));
-					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value});
+					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value,"at":document.getElementById("tnc").checked});
 					a.push(t);				    
 				    sessionStorage.setItem('session', JSON.stringify(a)); 
 				 }
@@ -140,7 +140,7 @@
 			
 		function displayData(){
 			console.clear();
-			let str="<table><tr><th>Name</th><th>Email</th><th>Password</th><th>Date of Birth</th></tr>";
+			let str="";
 			var d = JSON.parse(sessionStorage.getItem('session'));
 			document.getElementById("display").innerHTML = "";
 			
@@ -152,7 +152,7 @@
 				 str +=  "<tr><td>" +element.name + "</td><td>" + element.email +  "</td><td>" + element.pass + "</td><td>" + element.dob  +  "</td></tr>";
 			  }
 			});
-			str += "</table>";
+			
 			document.getElementById("display").innerHTML = str;
 		}
 				
@@ -173,8 +173,10 @@
 			</table>
 		</form>
 		</div>
-		<div id="display">
-			
+		<div>
+			<table id="display">
+				<tr><th>Name</th><th>Email</th><th>Password</th><th>Dob</th><th>Accepted terms?</td></tr>
+			</table>			
 		</div>
 	</body>
 </html>
