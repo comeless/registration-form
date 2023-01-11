@@ -1,3 +1,5 @@
+
+<!--https://comeless.github.io/registration-form/-->
 <html>
 	<head>
 		<style>
@@ -25,7 +27,40 @@
 	  
 		<script>
 			sessionStorage.clear();
-		    
+			
+			function calculate_age(dob) { 
+				var diff_ms = Date.now() - dob.getTime();
+				var age_dt = new Date(diff_ms); 			  
+				return Math.abs(age_dt.getUTCFullYear() - 1970);
+			}
+
+			
+			function isValidDate(dateString)
+			{
+				// First check for the pattern dd/mm/yyyy
+				if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString))
+					return false;
+
+				// Parse the date parts to integers
+				var parts = dateString.split("/");
+				var month = parseInt(parts[1], 10);
+				var day  = parseInt(parts[0], 10);
+				var year = parseInt(parts[2], 10);
+
+				// Check the ranges of month and year
+				if(year < 1000 || year > 3000 || month == 0 || month > 12)
+					return false;
+
+				var monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+
+				// Adjust for leap years
+				if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0))
+					monthLength[1] = 29;
+
+				// Check the range of the day
+				return day > 0 && day <= monthLength[month - 1];
+			};
+						
 			function validate(){
 			  
 				//var regName = /^[a-zA-Z]+ [a-zA-Z]+ [a-zA-Z]+$/;
@@ -63,12 +98,19 @@
 					pass.style.cssText += 'border-color:grey;background-color:#FFFFFF';
 				}
 				
-				if(!regDob.test(dob.value)){
+				if(!regDob.test(dob.value) || isValidDate(dob.value)==false){
+					
 					 alert('Please provide a valid date of birth');
 					 dob.focus;
 					 dob.style.cssText += 'border-color:red';
 					return false;
-				}else{
+				}else if(calculate_age(new Date(dob.value.substring(6,10),dob.value.substring(3,5),dob.value.substring(0,2)))<18 || calculate_age(new Date(dob.value.substring(6,10),dob.value.substring(3,5),dob.value.substring(0,2)))>55){
+					alert('Please provide a valid date of birth age should be 18  to 55 years');
+					 dob.focus;
+					 dob.style.cssText += 'border-color:red';
+					return false;					
+					}else{
+					
 					dob.style.cssText += 'border-color:grey;background-color:#FFFFFF';
 				}
 				if(document.getElementById("tnc").checked==false){
