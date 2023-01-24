@@ -1,5 +1,6 @@
 
 <!--https://comeless.github.io/registration-form/-->
+<!DOCTYPE html>
 <html>
 	<head>
 		<style>
@@ -34,17 +35,16 @@
 				return Math.abs(age_dt.getUTCFullYear() - 1970);
 			}
 
-			
 			function isValidDate(dateString)
 			{
-				// First check for the pattern dd/mm/yyyy
+				// First check for the pattern mm/dd/yyyy
 				if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString))
 					return false;
 
 				// Parse the date parts to integers
 				var parts = dateString.split("/");
-				var month = parseInt(parts[1], 10);
-				var day  = parseInt(parts[0], 10);
+				var day  = parseInt(parts[1], 10);
+				var month = parseInt(parts[0], 10);
 				var year = parseInt(parts[2], 10);
 
 				// Check the ranges of month and year
@@ -62,18 +62,22 @@
 			};
 						
 			function validate(){
-			  
-				//var regName = /^[a-zA-Z]+ [a-zA-Z]+ [a-zA-Z]+$/;
+			    alert("fds");
+				
 				var regName= /^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)$/;
 				var regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-				var regPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,}$/;
-				var regDob = /^((?:0[0-9])|(?:[1-2][0-9])|(?:3[0-1]))\/((?:0[1-9])|(?:1[0-2]))\/(\d{4})$/; 
+				var regPass = /^[a-zA-z0-9$@#]{6,}$/;
+			    var regDob = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
 				var name = document.getElementById('name');
 				var email = document.getElementById('email');
 				var pass = document.getElementById('password');
 				var dob = document.getElementById('dob');
+				var tnc = document.getElementById('tnc').checked;
+				
+				
+								
 				if(!regName.test(name.value)){
-					alert('Please provide a valid name like.. kamal v sony');
+					alert('Please provide a valid name like.. kamal sony');
 					name.focus;
 					name.style.cssText += 'border-color:red';
 					return false;
@@ -89,38 +93,25 @@
 					email.style.cssText += 'border-color:grey;background-color:#FFFFFF';
 				}
 				
-				if(!regPass.test(pass.value)){
-					 alert('Please provide a valid password');
-					 pass.focus;
-					 pass.style.cssText += 'border-color:red';
-					return false;
-				}else{
-					pass.style.cssText += 'border-color:grey;background-color:#FFFFFF';
-				}
-				
 				if(!regDob.test(dob.value) || isValidDate(dob.value)==false){
 					
 					 alert('Please provide a valid date of birth');
 					 dob.focus;
 					 dob.style.cssText += 'border-color:red';
 					return false;
-				}else if(calculate_age(new Date(dob.value.substring(6,10),dob.value.substring(3,5),dob.value.substring(0,2)))<18 || calculate_age(new Date(dob.value.substring(6,10),dob.value.substring(3,5),dob.value.substring(0,2)))>55){
-					alert('Please provide a valid date of birth age should be 18  to 55 years');
+						
+				}else if(calculate_age(new Date(dob.value.substring(6,10),dob.value.substring(0,2),dob.value.substring(3,5)))<18 || calculate_age(new Date(dob.value.substring(6,10),dob.value.substring(3,5),dob.value.substring(0,2)))>55){
+					 alert('Please provide a valid date of birth age should be 18  to 55 years');
 					 dob.focus;
 					 dob.style.cssText += 'border-color:red';
 					return false;					
 					}else{
 					
 					dob.style.cssText += 'border-color:grey;background-color:#FFFFFF';
-				}
-				if(document.getElementById("tnc").checked==false){
-					alert("Please accept Terms & Conditions");
-					return false;
-				}
-				
+				}				
 				if(sessionStorage.getItem("session")==null){
 					let a = [];
-					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value,"at":"true"});				    
+					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value,"at":tnc});				    
 					
 					a.push(t);
 					//console.log(a);
@@ -129,7 +120,7 @@
 				 }else{
 				 
 					let a = JSON.parse(sessionStorage.getItem('session'));
-					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value,"at":"true"});
+					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value,"at":tnc});
 					a.push(t);				    
 				    sessionStorage.setItem('session', JSON.stringify(a)); 
 				 }
@@ -139,7 +130,7 @@
 			}
 			
 		function displayData(){
-			console.clear();
+			//console.clear();
 			let str="<tr><th>Name</th><th>Email</th><th>Password</th><th>Dob</th><th>Accepted terms?</td></tr>";
 			var d = JSON.parse(sessionStorage.getItem('session'));
 			document.getElementById("display").innerHTML = "";
@@ -161,15 +152,15 @@
 	</head>
 	<body>
 		<table><tr><td>
-		<form id="regfrm"  onsubmit="return validate();">
+		<form id="regfrm" target="_self" onsubmit="return validate();" >
 			<table >
 				<tr><th colspan="2"><h2>Registration Form</h2></th></tr>
-				<tr><td>Name : </td><td><input type="text" name="name" id="name" placeholder="Enter full name" /></td></tr>
-				<tr><td>Email : </td><td><input type="text" name="email" id="email" placeholder="Enter email" /></td></tr>
-				<tr><td>Password : </td><td><input type="password" name="password" id="password" placeholder="Enter password" /></td></tr>
-				<tr><td>Date of birth : </td><td><input type="text" name="dob" id="dob" placeholder="Birth date (dd/mm/yyyy)" /></td></tr>
-				<tr><td colspna="2"><input type="checkbox" name="tnc" id="tnc" title="tnc" />Accept &amp; Conditions</td></tr>
-				<tr><td colspna="2"><button type="submit" class="submit-button" >Send</button></td></tr>
+				<tr><td> <label for="name">Name: </label></td><td><input type="text" name="name" id="name" placeholder="Enter full name" required /></td></tr>
+				<tr><td> <label for="email">Email: </label></td><td><input type="email" name="email" id="email" placeholder="Enter email" required /></td></tr>
+				<tr><td> <label for="password">Password: </label></td><td><input type="password" name="password" id="password" placeholder="Enter password" required /></td></tr>
+				<tr><td> <label for="dob">Date of Birth : </label></td><td><input type="text" name="dob" id="dob" placeholder="Birth date (mm/dd/yyyy)" required /></td></tr>
+				<tr><td> <label for="tnc">Accept &amp; Conditions:</label></td><td><input type="checkbox" name="tnc" id="tnc" title="tnc" />
+				<tr><td><button type="submit" class="submit-button" >Send</button></td></tr>
 			</table>
 		</form>
 		
