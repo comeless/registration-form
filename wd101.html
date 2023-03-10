@@ -1,0 +1,177 @@
+
+<!--https://comeless.github.io/registration-form/-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			 body{
+				background-color:#EEEDE8;
+				
+			 }
+			 table {
+				margin:auto;
+				margin-top:40px;
+				background-color:#FFFFFF;
+				border:1px solid #FFFFFF;
+				padding: 15px;
+				border-spacing: 15px;
+				border-radius: 10px 10px 10px 10px;
+			 }
+			 .submit-button {
+				color: #FFFFFF;
+				background: #0000FF;
+				border-radius: 0 10px;
+				font-weight: bold;
+			}
+		</style>
+	
+	  
+		<script>
+			//sessionStorage.clear();
+			
+			function calculate_age(dob) { 
+				var diff_ms = Date.now() - dob.getTime();
+				var age_dt = new Date(diff_ms); 			  
+				return Math.abs(age_dt.getUTCFullYear() - 1970);
+			}
+
+			function isValidDate(dateString)
+			{
+				// First check for the pattern mm/dd/yyyy
+				if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString))
+					return false;
+
+				// Parse the date parts to integers
+				var parts = dateString.split("/");
+				var day  = parseInt(parts[1], 10);
+				var month = parseInt(parts[0], 10);
+				var year = parseInt(parts[2], 10);
+
+				// Check the ranges of month and year
+				if(year < 1000 || year > 3000 || month == 0 || month > 12)
+					return false;
+
+				var monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+
+				// Adjust for leap years
+				if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0))
+					monthLength[1] = 29;
+
+				// Check the range of the day
+				return day > 0 && day <= monthLength[month - 1];
+			};
+						
+			function validate(){
+			    alert("fds");
+				
+				var regName= /^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)$/;
+				var regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+				var regPass = /^[a-zA-z0-9$@#]{6,}$/;
+			    var regDob = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+				var name = document.getElementById('name');
+				var email = document.getElementById('email');
+				var pass = document.getElementById('password');
+				var dob = document.getElementById('dob');
+				var tnc = document.getElementById('tnc').checked;
+				
+				
+								
+				if(!regName.test(name.value)){
+					alert('Please provide a valid name like.. kamal sony');
+					name.focus;
+					name.style.cssText += 'border-color:red';
+					return false;
+				}else{
+					name.style.cssText += 'border-color:grey;background-color:#FFFFFF';
+				}
+				if(!regEmail.test(email.value)){
+					 alert('Please provide a valid email address');
+					 email.focus;
+					 email.style.cssText += 'border-color:red';
+					return false;
+				}else{
+					email.style.cssText += 'border-color:grey;background-color:#FFFFFF';
+				}
+				
+				if(!regDob.test(dob.value) || isValidDate(dob.value)==false){
+					
+					 alert('Please provide a valid date of birth');
+					 dob.focus;
+					 dob.style.cssText += 'border-color:red';
+					return false;
+						
+				}else if(calculate_age(new Date(dob.value.substring(6,10),dob.value.substring(0,2),dob.value.substring(3,5)))<18 || calculate_age(new Date(dob.value.substring(6,10),dob.value.substring(3,5),dob.value.substring(0,2)))>55){
+					 alert('Please provide a valid date of birth age should be 18  to 55 years');
+					 dob.focus;
+					 dob.style.cssText += 'border-color:red';
+					return false;					
+					}else{
+					
+					dob.style.cssText += 'border-color:grey;background-color:#FFFFFF';
+				}				
+				if(sessionStorage.getItem("session")==null){
+					let a = [];
+					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value,"at":tnc});				    
+					
+					a.push(t);
+					//console.log(a);
+				    sessionStorage.setItem('session', JSON.stringify(a));
+					
+				 }else{
+				 
+					let a = JSON.parse(sessionStorage.getItem('session'));
+					let t = ({"name":name.value,"email":email.value,"pass":pass.value,"dob":dob.value,"at":tnc});
+					a.push(t);				    
+				    sessionStorage.setItem('session', JSON.stringify(a)); 
+				 }
+				 displayData();
+				//console.log(JSON.parse(sessionStorage.getItem("session")));
+				return false;				
+			}
+			
+		function displayData(){
+			//console.clear();
+			let str="<tr><th>Name</th><th>Email</th><th>Password</th><th>Dob</th><th>Accepted terms?</td></tr>";
+			var d = JSON.parse(sessionStorage.getItem('session'));
+			document.getElementById("display").innerHTML = "";
+			
+			d.forEach(function each(element) {
+			  if (Array.isArray(element)) {
+				element.forEach(each);
+			  } else {
+				console.log(element);
+				 str +=  "<tr><td>" +element.name + "</td><td>" + element.email +  "</td><td>" + element.pass + "</td><td>" + element.dob  + "</td><td>" +  element.at  + "</td></tr>";
+			  }
+			});
+			
+			document.getElementById("display").innerHTML = str;
+		}
+				
+		</script>
+		
+	</head>
+	<body>
+		<table><tr><td>
+		<form id="regfrm" target="_self" onsubmit="return validate();" >
+			<table >
+				<tr><th colspan="2"><h2>Registration Form</h2></th></tr>
+				<tr><td> <label for="name">Name: </label></td><td><input type="text" name="name" id="name" placeholder="Enter full name" required /></td></tr>
+				<tr><td> <label for="email">Email: </label></td><td><input type="email" name="email" id="email" placeholder="Enter email" required /></td></tr>
+				<tr><td> <label for="password">Password: </label></td><td><input type="password" name="password" id="password" placeholder="Enter password" required /></td></tr>
+				<tr><td> <label for="dob">Date of Birth : </label></td><td><input type="text" name="dob" id="dob" placeholder="Birth date (mm/dd/yyyy)" required /></td></tr>
+				<tr><td> <label for="tnc">Accept &amp; Conditions:</label></td><td><input type="checkbox" name="tnc" id="tnc" title="tnc" />
+				<tr><td><button type="submit" class="submit-button" >Send</button></td></tr>
+			</table>
+		</form>
+		
+			</td>
+			</tr>
+			<tr>
+			<td valign="top"><h2>Entries</h2>
+			<table id="display">
+				<tr><th>Name</th><th>Email</th><th>Password</th><th>Dob</th><th>Accepted terms?</td></tr>
+			</table>			
+			</td></tr>
+		</table>
+	</body>
+</html>
